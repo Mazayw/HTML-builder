@@ -90,6 +90,13 @@ async function htmlGenerator(source, destFile) {
   }
 }
 
-copyDir(assetsDirectory, path.resolve(__dirname, 'project-dist', 'assets'));
-mergeStyles(stylesDirectory, stylesDist);
-htmlGenerator(components, destHtml);
+fs.promises
+  .rm(dist, { recursive: true, force: true })
+  .then(() => {
+    copyDir(assetsDirectory, path.resolve(__dirname, 'project-dist', 'assets'));
+    mergeStyles(stylesDirectory, stylesDist);
+    htmlGenerator(components, destHtml);
+  })
+  .catch((error) => {
+    console.error(error.message);
+  });

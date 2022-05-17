@@ -4,22 +4,26 @@ const path = require('path');
 const copyFrom = path.resolve(__dirname, 'files');
 const copyTo = path.resolve(__dirname, 'files-copy');
 
-fs.mkdir(copyTo, { recursive: true }, (err) => {
-  if (err) return console.log('Can`t create folder. Error code: ', err.code);
-});
+fs.rm(copyTo, { recursive: true, force: true }, (err) => {
+  if (err) throw err;
 
-fs.readdir(copyFrom, { withFileTypes: true }, (error, data) => {
-  if (error) throw error.code;
+  fs.mkdir(copyTo, { recursive: true }, (err) => {
+    if (err) return console.log('Can`t create folder. Error code: ', err.code);
+  });
 
-  data.forEach((file) => {
-    if (file.isFile()) {
-      const copyFromFilePath = path.resolve(copyFrom, file.name);
-      const copyToFilePath = path.resolve(copyTo, file.name);
+  fs.readdir(copyFrom, { withFileTypes: true }, (error, data) => {
+    if (error) throw error.code;
 
-      fs.copyFile(copyFromFilePath, copyToFilePath, (error) => {
-        if (error) throw error.code;
-        console.log(`${file.name} copied`);
-      });
-    }
+    data.forEach((file) => {
+      if (file.isFile()) {
+        const copyFromFilePath = path.resolve(copyFrom, file.name);
+        const copyToFilePath = path.resolve(copyTo, file.name);
+
+        fs.copyFile(copyFromFilePath, copyToFilePath, (error) => {
+          if (error) throw error.code;
+          console.log(`${file.name} copied`);
+        });
+      }
+    });
   });
 });
